@@ -1,0 +1,136 @@
+What is Memory Management?
+Memory Management is how Java organizes, uses, and cleans the memory while your program runs. Java manages memory automatically, but knowing the details helps you write better, faster programs and debug problems like crashes or memory leaks.
+
+JVM Memory Structure — The Big Library Layout
+When you run a Java program, the JVM creates several memory areas — like different sections in the library, each with a specific job.
+
+1. Heap Memory — The Bookshelf for Objects
+This is the main area where all objects (instances of classes) are stored.
+
+It’s shared by all threads.
+
+Heap is divided into:
+
+Young Generation (newly created objects)
+
+Old Generation (long-lived objects)
+
+Permanent Generation / Metaspace (class metadata, method info)
+
+2. Stack Memory — The Reading Desks for Method Calls
+Each thread gets its own stack.
+
+Stores local variables and method call info.
+
+Follows Last In, First Out (LIFO) — like a pile of books where you always pick from the top.
+
+When a method is called, a block called a stack frame is pushed to the stack; when it returns, it pops off.
+
+Stack memory is limited and small compared to heap.
+
+Primitive types and references live here.
+
+3. Method Area (Metaspace)
+Stores class-level data: bytecode, runtime constant pool, method data.
+
+Shared by all threads.
+
+4. Program Counter (PC) Register
+Keeps track of the current instruction being executed.
+
+Story: Library Visitors and Memory Areas
+Heap is the large book storage where everyone keeps their stuff.
+
+Stack is your desk — you keep your notes (local variables) here while working.
+
+Method area is the library’s archive where all book templates (class info) live.
+
+The PC register is the librarian’s finger on the index, tracking the current page.
+
+How Memory Management Works in Practice
+Object Creation and Storage
+When you write new Object(), JVM creates that object in heap.
+
+Reference to that object is stored on stack if it’s a local variable.
+
+Example:
+
+void example() {
+    String name = new String("Java"); // 'name' is on stack, actual String object on heap
+}
+When example() finishes, stack frame is popped and reference name disappears, but the actual String object stays on heap until GC removes it.
+
+Garbage Collection (GC) — The Housekeeper
+Java automatically deletes objects from heap when they are no longer referenced.
+
+This process is Garbage Collection (covered in detail before).
+
+GC keeps heap tidy so you don’t run out of memory.
+
+Stack Overflow and Heap Overflow
+Stack Overflow:
+Happens if you have too many nested method calls (deep recursion) and stack runs out of space.
+
+Heap Overflow (OutOfMemoryError):
+Happens if your program keeps creating objects without releasing them — memory fills up.
+
+Why Separate Stack and Heap?
+Stack is fast, stores small fixed-size variables.
+
+Heap stores variable-sized objects and is shared by threads.
+
+Separating helps JVM manage memory efficiently and avoid corruption.
+
+Memory Management Tips for Developers
+Minimize unnecessary object creation.
+
+Nullify references if you no longer need objects (helps GC).
+
+Avoid holding references in static variables unintentionally.
+
+Use primitive types when possible (int, double) because they go on stack.
+
+Beware of memory leaks caused by listeners, caches, or big collections.
+
+How JVM Manages Memory Internally (Simplified Flow)
+Program starts: JVM creates heap, stack, method area.
+
+When main method runs, stack frame created.
+
+Objects created go to heap.
+
+Methods create more stack frames.
+
+When methods return, their stack frames are removed.
+
+When objects have no references, GC runs to clean heap.
+
+Program continues until all work is done, JVM releases all memory on exit.
+
+Quick Code Example: Stack vs Heap
+
+public class MemoryDemo {
+    public static void main(String[] args) {
+        int x = 10;                // primitive stored on stack
+        String s = new String("Hi"); // 's' on stack, object on heap
+
+        printNumber(x);
+    }
+
+    static void printNumber(int num) {
+        System.out.println(num);   // 'num' stored on stack in this method
+    }
+}
+Summary Story: Memory Management Party
+Imagine a party:
+
+Heap is the big party hall where guests (objects) hang out.
+
+Stack is your personal notebook where you write quick notes (local variables and method calls).
+
+When a guest leaves (no references), the janitor (GC) cleans the hall.
+
+Your notebook clears itself after the meeting (method ends).
+
+If you invite too many guests without cleaning, the hall gets crowded (heap overflow).
+
