@@ -1,0 +1,164 @@
+Internal Working of HashMap and HashSet in Java
+Map<Key, Value> map = new HashMap<>();
+✅ Basics
+HashMap is a class in Java’s collection framework.
+
+It extends AbstractMap and implements Map, Cloneable, and Serializable.
+
+It stores data in key-value pairs using a technique called Hashing.
+
+🧬 Internal Structure
+➕ Behind the Scene:
+It uses an array of Node<K,V> called the table.
+
+Each Node holds:
+
+hash – calculated using key’s hashCode()
+
+key
+
+value
+
+next – pointer to next node (for collision handling using LinkedList or Tree)
+
+static class Node<K,V> implements Map.Entry<K,V> {
+    final int hash;
+    final K key;
+    V value;
+    Node<K,V> next;
+}
+🧮 How does .put(key, value) work?
+“Insert like a pro – behind-the-scenes magic 🔮”
+
+Java calculates hash from the key.
+
+Finds the index in the table using index = (n - 1) & hash.
+
+If no node at index, directly inserts the node.
+
+If node already exists (collision), checks:
+
+Same key? → update value.
+
+Different key but same index? → adds to a LinkedList at that index.
+
+Too many collisions? → LinkedList turns into Tree (TreeNode) (after Java 8).
+
+💡 Fun fact: If more than 8 elements in a bucket and table size ≥ 64, LinkedList → Tree.
+
+❓ How .get(key) works?
+Calculate hash using the key.
+
+Go to index in table.
+
+Traverse LinkedList or Tree in that index.
+
+If key matches → return value. Else → return null.
+
+❌ .remove(key) internal working?
+Go to calculated index.
+
+Traverse LinkedList or Tree.
+
+Remove node where key matches.
+
+Adjust links in LinkedList (prev.next = current.next).
+
+⚙️ What is containsKey()?
+Works exactly like get(), but returns true/false instead of value.
+
+
+map.containsKey("name") // true or false
+🧹 clear() method?
+“Make every element null like formatting a disk.”
+
+
+map.clear();
+It loops through the entire table.
+
+Sets each element to null.
+
+🔢 size() method?
+
+map.size();
+Internally, there's a variable called size which increments on put() and decrements on remove().
+
+size() just returns that value.
+
+🧪 Initial Capacity & Load Factor
+Default initial capacity = 16
+
+Default load factor = 0.75
+
+Load factor tells when to resize the map:
+
+If (size >= capacity × load factor) → resize (double the size)
+🔁 Is HashMap Dynamic?
+❌ No, it's not dynamic like ArrayList by default – it grows based on threshold.
+
+If initial capacity = 3, load factor = 0.75:
+
+
+Threshold = 3 * 0.75 = 2.25 → after 2 inserts → grows (resize)
+🌳 When Does LinkedList Become Tree?
+Bucket’s size > 8
+
+Table size >= 64
+
+Java 8+ only
+
+→ This improves O(n) search to O(log n)!
+
+💡 HashSet Internal Working
+
+Set<String> set = new HashSet<>();
+🔄 HashSet = Backed by HashMap
+Yes! Every HashSet is actually using a HashMap underneath.
+private transient HashMap<E,Object> map;
+private static final Object PRESENT = new Object();
+When you do:
+
+set.add("apple");
+Internally:
+
+map.put("apple", PRESENT);
+So HashSet only stores keys, and uses a dummy object as value.
+
+🧪 How .add() in HashSet works?
+Internally calls put() of HashMap.
+
+If key already exists → it doesn’t add.
+
+If not exists → adds key with dummy value.
+
+✅ Summary Cheat Sheet
+Method	HashMap	HashSet
+put(K, V)	Adds key-value	Not available
+add(E)	Not available	Internally → map.put(E, PRESENT)
+get(K)	Return value	Not available
+containsKey(K)	Checks key	contains() in HashSet does same
+remove(K)	Removes key	Same internally
+clear()	Empties map	Empties set (calls map.clear())
+Dynamic?	No. Grows on threshold	Same as map
+
+👨‍🏫 Simple Real-World Story
+HashMap is like a student register where you search by student ID (key) and get name/details (value).
+HashSet is like a roll call – it only cares whether the student exists (key), doesn’t care about details.
+
+🧠 Interview-Ready Takeaways
+HashSet uses HashMap internally.
+
+HashMap uses array of Node with chaining (LinkedList → TreeNode).
+
+Collisions are handled using chaining.
+
+Resizing happens when size crosses threshold.
+
+Java 8+ optimizes large chains into red-black trees.
+
+📁 Bonus: Sample Code to Print Internal Table (for learning)
+
+Field tableField = HashMap.class.getDeclaredField("table");
+tableField.setAccessible(true);
+Object[] table = (Object[]) tableField.get(myMap);
+System.out.println("Table length: " + table.length);
