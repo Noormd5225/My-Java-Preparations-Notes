@@ -1,0 +1,159 @@
+Imagine you live in a house (your computer memory) and every day you buy new stuff (create objects). Over time, some of these things become useless — like old newspapers, empty boxes, broken toys — and they just take up space. You need a housekeeper to clean out the junk so your house stays tidy and you have room for new stuff.
+
+In Java, the Garbage Collector (GC) is like that housekeeper. It automatically cleans up “junk” (objects no longer needed) in your program’s memory — the heap.
+
+What is Garbage Collection (GC)?
+Garbage Collection is a process inside the Java Virtual Machine (JVM) that automatically detects and deletes objects that your program no longer uses, freeing up memory to avoid memory leaks and out-of-memory errors.
+
+Why do we need GC?
+In some languages like C/C++, programmers manually allocate and free memory. But this is risky — if you forget to free memory, your program leaks memory and crashes. Java removes this headache by doing it for you.
+
+How does Garbage Collection work?
+1. Object Creation and Heap Memory
+When your Java program runs and you create an object like:
+
+Person p = new Person();
+The JVM allocates memory for this object in a part of memory called the Heap.
+
+2. References to Objects
+Your variables, like p here, hold references to these objects in the heap.
+
+3. Reachability Analysis (Who’s still using it?)
+GC checks if an object is reachable — meaning, can your program still access it?
+
+If an object is reachable (has references pointing to it), it’s alive.
+
+If no references point to it (like if you do p = null;), then it’s eligible for garbage collection.
+
+Story time: The Forgotten Book
+Imagine you borrow a book from the library (create an object). You keep it on your desk (heap memory). When you’re done, you either put it back (null reference) or lose track of it. If nobody else is reading or holding the book, the librarian (GC) will eventually remove it to make shelf space.
+
+JVM Memory Structure and GC Regions
+JVM organizes heap memory into different generations for efficiency.
+
+Young Generation
+Where all new objects are created.
+
+Made of three parts:
+
+Eden space (where objects first land)
+
+Two Survivor spaces (S0 and S1) for objects that survive initial GC cycles
+
+Objects here tend to be short-lived (temporary).
+
+Old Generation (Tenured Generation)
+Objects that survive multiple GC cycles in Young Gen get promoted here.
+
+These are objects likely to live longer (like your main data structures).
+
+Metaspace (formerly Permanent Generation)
+Stores metadata about classes and methods, not regular objects.
+
+Why generations?
+Most objects die young. By focusing GC efforts on the Young Generation more often, JVM cleans up quickly and cheaply. Old generation collections happen less often because they take longer.
+
+The Lifecycle of Garbage Collection
+GC runs in phases:
+
+Mark Phase
+The GC marks all reachable (alive) objects by traversing from “roots” like thread stacks, static fields, and JNI references.
+
+Sweep Phase
+Unmarked objects are unreachable — so they’re swept away, freeing memory.
+
+Compact Phase
+Memory fragmentation happens when objects are deleted, creating gaps. JVM moves objects to compact memory for faster allocation.
+
+Types of Garbage Collectors in Java
+Serial Garbage Collector:
+Single-threaded, simple. Good for small apps or single-core CPUs.
+
+Parallel Garbage Collector:
+Uses multiple threads to speed up GC work.
+
+Concurrent Mark-Sweep (CMS) Collector:
+Minimizes pause time by doing most GC work concurrently with application threads.
+
+G1 (Garbage First) Collector:
+Splits heap into many regions, collects regions with most garbage first for efficiency.
+
+How GC affects your program?
+GC sometimes causes “Stop-the-World” pauses where your program halts briefly during collection. Newer collectors reduce these pauses for smoother performance.
+
+What triggers Garbage Collection?
+JVM decides based on available free heap space.
+
+You can suggest GC with System.gc(), but JVM is free to ignore it.
+
+Explicitly setting references to null or letting them go out of scope makes objects eligible.
+
+Important Concepts to Remember
+Reachability
+Strong references: Normal references — prevent GC.
+
+Soft references: Collected only when memory is low.
+
+Weak references: Collected during next GC cycle.
+
+Phantom references: For cleanup activities after GC.
+
+finalize() method
+Before an object is garbage collected, JVM calls its finalize() method. But don’t rely on finalize for cleanup — it’s unpredictable and deprecated in newer Java versions.
+
+Sample Code and Explanation
+public class GCDemo {
+
+    public static void main(String[] args) {
+        GCDemo obj1 = new GCDemo();
+        GCDemo obj2 = new GCDemo();
+
+        obj1 = null;  // obj1 is now unreachable
+        obj2 = null;  // obj2 is also unreachable
+
+        System.gc();  // Request JVM to run GC
+
+        System.out.println("GC requested");
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        System.out.println("Object is garbage collected");
+    }
+}
+When obj1 and obj2 are set to null, their objects become unreachable.
+
+Calling System.gc() requests JVM to run garbage collection.
+
+The overridden finalize() method prints when an object is collected (but this may or may not run immediately).
+
+The program prints “GC requested” immediately, then JVM runs GC in background.
+
+Tips to avoid memory leaks
+Remove references to unused objects (set to null).
+
+Avoid keeping unnecessary static references.
+
+Watch out for long-lived caches or listeners.
+
+Use profiling tools to detect leaks.
+
+How to monitor Garbage Collection?
+Use JVM flags like -verbose:gc, -XX:+PrintGCDetails to see GC logs.
+
+Use profilers like VisualVM, JConsole, Java Flight Recorder to understand memory and GC behavior.
+
+Summary Story: JVM's Housekeeping Team
+Your program is a big party with guests (objects).
+
+Young generation is the guest entrance — many guests come and leave quickly.
+
+Old generation is the VIP lounge — guests who stay longer.
+
+The GC team keeps checking who’s still dancing (reachable).
+
+They politely ask guests who left (unreachable) to leave and clean the room.
+
+Sometimes, they tidy up the furniture (compact) for more space.
+
+They work mostly in the background, so you don’t have to worry about cleanin
