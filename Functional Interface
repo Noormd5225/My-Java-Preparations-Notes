@@ -1,0 +1,116 @@
+A Functional Interface in Java is just an interface that has only one abstract method. This type of interface is also called a SAM:
+
+SAM = Single Abstract Method
+
+You can use the @FunctionalInterface annotation, but it’s optional — just for clarity.
+
+We use Functional Interfaces to enable lambda expressions, which are nothing but shortcut methods or anonymous methods in Java.
+
+💬 Example:
+
+@FunctionalInterface
+interface MyInterface {
+    void sayHello();
+}
+
+MyInterface obj = () -> System.out.println("Hello, I’m in Functional Interface!");
+obj.sayHello();
+This is the simplest form — now let’s get into the real world!
+
+⚙️ Functional Interface = Lambda Power
+Think of Functional Interface like a foundation of functional programming in Java. Lambda expressions give you a short, clean way to implement that one method.
+
+Now Java has already created some built-in functional interfaces for you — so you don't have to reinvent the wheel.
+
+✅ Function – Do Some Work and Return
+Let’s say we want to process something and get a result back. That’s where Function comes in.
+
+It takes one input and returns one output.
+
+Function<Integer, Integer> square = n -> n * 10;
+System.out.println(square.apply(5)); // Output: 50
+🔗 Chain the Function
+You can combine multiple functions using andThen() and compose().
+
+Function<Integer, Integer> multiply = x -> x * 2;
+Function<Integer, Integer> add = x -> x + 3;
+
+System.out.println(multiply.andThen(add).apply(5)); // (5*2) + 3 = 13
+System.out.println(multiply.compose(add).apply(5)); // (5+3) * 2 = 16
+Just remember:
+
+andThen: first do this, then that.
+
+compose: first that, then this.
+
+🛍️ Consumer – Take It, Do Something, No Return
+Imagine going to a shop. You give your money (input), and they give you a product (output).
+
+In Consumer, you just give input and they do something — but nothing is returned.
+
+Consumer<String> greet = name -> System.out.println("Welcome " + name);
+greet.accept("Noormohamed");
+Just use accept(), no return.
+
+Think like: “I gave input, they did their job, I don’t care what happens after.”
+
+📦 Supplier – Just Give Me Something
+Now reverse the story — You are waiting in a shop, expecting a free product. You don’t give anything, but you get something in return.
+
+That’s the job of Supplier. It doesn’t take any argument but just returns a value.
+
+Supplier<String> product = () -> "Free goodies for Noormohamed!";
+System.out.println(product.get());
+No input, only output.
+
+Think of a robot chef that gives you tea without you asking what ingredient it needs.
+
+❓ Predicate – True or False Only
+Let’s say you ask the shopkeeper: “Do you have this item?”
+
+They reply: “Yes” or “No”.
+
+This is exactly what Predicate does. It takes an input, and returns only true or false.
+
+Predicate<Integer> isEven = n -> n % 2 == 0;
+System.out.println(isEven.test(10)); // true
+Use test() method.
+
+Think: ask a question, get yes or no.
+
+🤝 Some Extra Members in the Family
+Java also has some upgraded versions:
+
+BiFunction
+It takes two inputs, and returns one output.
+
+BiFunction<Integer, Integer, Integer> add = (a, b) -> a + b;
+System.out.println(add.apply(5, 3)); // 8
+BiConsumer
+It takes two inputs, and does something, but returns nothing.
+
+BiConsumer<String, Integer> printAge = (name, age) ->
+    System.out.println(name + " is " + age + " years old");
+
+printAge.accept("Noormohamed", 24);
+No return. Just do some action and finish.
+
+🧠 Final Recap – The Human Way
+Let’s imagine you go to a store. Think like this:
+
+Function: You give an item and they process it, like converting dollars to rupees.
+
+Consumer: You give something, they act on it — like putting trash in a bin.
+
+Supplier: You get something for free — like getting a chocolate sample at a shop.
+
+Predicate: You ask: “Is this available?” – they say Yes/No.
+
+BiFunction: You give two items, they return one — like adding sugar and coffee, and getting coffee mix.
+
+BiConsumer: You give two items, they act on it — like giving two ingredients and seeing someone cook.
+
+✅ Conclusion
+Functional interfaces are the core of lambda expressions and Java Streams. If you master these, you're one step closer to writing modern, clean, and professional Java code.
+
+Write less, do more — that’s the power of functional interfaces!
