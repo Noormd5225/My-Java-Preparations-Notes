@@ -1,0 +1,185 @@
+            Throwable
+            /       \
+         Error     Exception
+                     /    \
+         Checked    Unchecked (Runtime)
+Throwable is the superclass for all exceptions and errors.
+
+Exception:
+Exception is the abnormal situation arise during the execution of the program. It interrupts the flow of the program.
+What's an Exception?
+Imagine you're withdrawing money from an ATM. Everything is fine until suddenly the cash tray gets stuck – this is an exception.
+
+In code, exception = something went wrong while running the program. It breaks the normal flow.
+
+Exception Hierarchy in Java
+Object
+  ↳ Throwable
+      ↳ Error
+      ↳ Exception
+           ↳ Checked Exception
+           ↳ Unchecked Exception (Runtime)
+
+ Throwable
+Throwable class has Error and Exception.
+
+Error – Something you shouldn’t catch (like OutOfMemoryError).
+
+Exception – Something you can catch and recover from.
+
+⚙️ Two Types of Exceptions
+🧷 1. Checked Exception – (Compile Time)
+These are checked by the compiler, and you must either handle them or declare them.
+
+Examples:
+
+IOException
+
+SQLException
+
+ClassNotFoundException
+
+💡 Story: You are opening a file. The compiler knows file might not exist. So it says: “Handle it, or I won’t compile.”
+
+🔧 2. Unchecked Exception – (Runtime)
+These occur at runtime. Compiler doesn’t check them.
+
+Examples:
+
+NullPointerException
+
+ArrayIndexOutOfBoundsException
+
+ArithmeticException
+
+💡 Story: You're dividing 10 by 0. Compiler says okay, but at runtime – BOOM! Crash.
+
+
+Syntax:
+try {
+    // risky code
+} catch (ExceptionType e) {
+    // handling code
+} finally {
+    // always runs
+}
+Rules You Must Know:
+Without try, you cannot use catch or finally.
+
+You can use:
+
+try + catch
+
+try + finally
+
+try + catch + finally
+
+✅ try + catch = meaningful
+❌ try + finally = allowed but not always useful
+
+🧪 try-catch-finally Flow
+
+try {
+    int result = 10 / 0;
+} catch (ArithmeticException e) {
+    System.out.println("Caught error: " + e.getMessage());
+} finally {
+    System.out.println("This always runs!");
+}
+If error occurs → goes to catch.
+
+If no matching catch → program crashes.
+
+Finally always runs (even if no error or return used).
+
+🔁 Nested Try-Catch
+First outer try executes → then inner.
+Inner catch handles only inner exceptions.
+
+
+try {
+    System.out.println("Outer try");
+    try {
+        int x = 1 / 0;
+    } catch (ArithmeticException e) {
+        System.out.println("Inner catch: " + e.getMessage());
+    }
+} catch (Exception e) {
+    System.out.println("Outer catch");
+}
+⚠️ Nested Catch Order
+Expected exception should come first
+
+General Exception should come last
+
+try {
+    String str = null;
+    System.out.println(str.length());
+} catch (NullPointerException e) {
+    System.out.println("Null value found");
+} catch (Exception e) {
+    System.out.println("Something went wrong");
+}
+❗If you put catch(Exception e) first, other catch blocks become unreachable.
+
+🧠 throw vs throws
+Keyword	Meaning	Example
+throw	Used to throw an exception manually	throw new ArithmeticException("Manual error")
+throws	Used to declare exception in method signature	void check() throws IOException
+
+🧨 Custom Exceptions – Create Your Own Rules
+You can create your own exception class using extends Exception.
+
+👨‍🏫 Example:
+
+class AgeException extends Exception {
+    AgeException(String msg) {
+        super(msg);
+    }
+}
+
+void checkAge(int age) throws AgeException {
+    if (age < 18) {
+        throw new AgeException("You must be 18+");
+    } else {
+        System.out.println("Eligible");
+    }
+}
+💡 Story: You’re developing a voting system. If a person is under 18, throw your own custom rule.
+
+⚡ Real-Life Use Case
+
+public void readFile(String fileName) {
+    try {
+        FileReader fr = new FileReader(fileName);
+        BufferedReader br = new BufferedReader(fr);
+        System.out.println(br.readLine());
+    } catch (FileNotFoundException e) {
+        System.out.println("File not found!");
+    } catch (IOException e) {
+        System.out.println("Cannot read file!");
+    } finally {
+        System.out.println("Done reading");
+    }
+}
+✅ try-with-resources (Java 7+)
+Automatically closes resources (files, DB, etc).
+
+try (BufferedReader br = new BufferedReader(new FileReader("data.txt"))) {
+    System.out.println(br.readLine());
+} catch (IOException e) {
+    System.out.println("Error reading file");
+}
+🧪 Advanced Tips (From Real Dev Experience)
+Never catch an exception if you can't handle it.
+
+Always close your resources in finally or use try-with-resources.
+
+Create custom exceptions for business rules.
+
+Don’t suppress exception silently:
+
+java
+Copy
+Edit
+catch(Exception e) { } // ❌ BAD PRACTICE
