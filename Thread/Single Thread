@@ -1,0 +1,30 @@
+package MultiThread;
+
+public class Mythread extends Thread implements Runnable  {
+
+	
+	public  void run() {
+		int sum=0;
+		for(int i=0;i<300000;i++) 
+		{
+			sum=sum+i;
+			
+		}
+		System.out.println(sum);
+	}
+	public static void main(String [] args) {
+		Mythread t=new Mythread();
+		t.start();
+		Thread ts=new Thread();
+		ts.start();
+		
+		
+		Thread d=new Thread(
+				()->
+				{
+					System.out.println("i am without run");
+				}
+				);
+		d.start();
+	}
+}
