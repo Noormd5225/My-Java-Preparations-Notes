@@ -1,0 +1,60 @@
+
+Why Synchronization:
+
+Sometimes without using sychronize keyword it will produce wrong count value. because more than one resource use the same variable it may lead to miss handling. 
+by using synchronize keyword we can solve this issue.
+
+
+
+
+package MultiThread;
+
+public class Counter {
+
+	int count=0;
+	public synchronized void inc() {
+		count++;
+	}
+}
+
+
+package MultiThread;
+
+public class Mythread {
+
+	
+	
+	public static void main(String [] args) throws InterruptedException {
+		
+		
+		Counter c=new Counter();
+		
+		Thread tx=new Thread(
+				
+				()->{
+					for(int i=0;i<1000;i++) {
+						c.inc();
+					}
+				}
+				
+				);
+		
+Thread ty=new Thread(
+				
+				()->{
+					for(int i=0;i<1000;i++) {
+						c.inc();
+					}
+				}
+				
+				);
+
+		
+		tx.start();
+		ty.start();
+		tx.join();
+		ty.join();
+		
+		System.out.println(c.count);
+	}
+}
